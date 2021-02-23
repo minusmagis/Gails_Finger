@@ -7,6 +7,9 @@ extern char Command[];
 M2_EXTERN_ALIGN(el_z_home_first);
 M2_EXTERN_LABEL(el_approach_success_label);
 M2_EXTERN_LABEL(el_approach_fail_label);
+M2_EXTERN_LABEL(el_z_homing_success_label);
+M2_EXTERN_LABEL(el_z_homing_fail_label);
+M2_EXTERN_ALIGN(el_top);
 
 #define MeasuringInterval 1000              //Capacitance measurement interval in steps to prevent the movement from being too slow
 
@@ -20,7 +23,7 @@ extern boolean homez;
 
 void ApproachSample() {
   if (homez == 1) {
-    refresh();
+    Refresh_LCD();
     Approach();
   }
   else {
@@ -29,7 +32,7 @@ void ApproachSample() {
 }
 
 void Approach() {
-  capacitiveReset();
+  CapacitiveReset();
   if (Feedrate >= 1000) {
     Feedrate = 1000;
   }
@@ -58,10 +61,10 @@ void Approach() {
 
     if (k > MeasuringInterval) {
       k = 0;
-      if (capacitiveValue()) {
+      if (CapacitiveValue()) {
         sucAp = 1;
         m2_SetRoot(&el_approach_success_label);
-        refresh();
+        Refresh_LCD();
         delay(1000);
         m2_SetRoot(&el_top);
         break;
@@ -75,7 +78,7 @@ void Approach() {
   currentPosZ = ZaxisRange + (i / Zstepsmm);
   if (sucAp == 0) {
     m2_SetRoot(&el_approach_fail_label);
-    refresh();
+    Refresh_LCD();
     delay(1000);
     m2_SetRoot(&el_top);
   }

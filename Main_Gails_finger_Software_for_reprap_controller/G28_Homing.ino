@@ -11,20 +11,20 @@ M2_EXTERN_LABEL(el_z_homing_fail_label);
 M2_EXTERN_ALIGN(el_top);
 
 void Home() {
-refresh();
+Refresh_LCD();
   PosZ = 115;                                   //Set the position to the homing position and home the steppers
   currentPosZ = 115;
   homez = stepperZ.moveToHomeInMillimeters(directionTowardHome, ZhomingSpeedInMMPerSec, ZmaxHomingDistanceInMM, LIMIT_SWITCH_Z_PIN);
   //delay(500);
   if (homez){
   m2_SetRoot(&el_z_homing_success_label);
-  refresh();
+  Refresh_LCD();
   delay(1000);
   m2_SetRoot(&el_top);
   }
   else{
   m2_SetRoot(&el_z_homing_fail_label);
-  refresh();
+  Refresh_LCD();
   delay(1000);
   m2_SetRoot(&el_top);
   }

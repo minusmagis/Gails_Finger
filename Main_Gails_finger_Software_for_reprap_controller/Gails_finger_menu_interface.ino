@@ -1,3 +1,4 @@
+// This script takes care of the LCD Setup and its control loop
 
 extern boolean homez;
 extern char z_homing_28_bits[];
@@ -11,6 +12,39 @@ extern char Command[];
 uint32_t height2dp = 11500;
 
 boolean returntomain = false;
+
+
+// First we define the pins for the LCD Connection
+
+U8GLIB_ST7920_128X64_4X u8g(17, 15, 16);  // SPI Com: SCK = en = 18, MOSI = rw = 16, CS = di = 17
+
+M2_EXTERN_ALIGN(el_top);  // forward declaration of the top level element
+
+M2tk m2(&el_top, m2_es_arduino_rotary_encoder, m2_eh_4bd, m2_gh_u8g_ffs);
+
+void Setup_LCD(){
+    // Connect u8glib with m2tklib
+  m2_SetU8g(u8g.getU8g(), m2_u8g_box_icon);
+
+  // Assign u8g font to index 0
+  m2.setFont(0, u8g_font_6x13);
+
+  // Setup keys
+  m2.setPin(M2_KEY_SELECT, 14);
+  m2.setPin(M2_KEY_ROT_ENC_A, 10);
+  m2.setPin(M2_KEY_ROT_ENC_B, 9);
+}
+
+void Refresh_LCD(){
+      m2.checkKey();
+  if ( m2.handleKey() || newFrame() ) {
+    u8g.firstPage();  
+    do {
+      draw();
+    } while( u8g.nextPage() );
+  }
+}
+
 
 M2_EXTERN_ALIGN(el_top);  // forward declaration of the top level element
 M2_EXTERN_ALIGN(el_z_homing_course);
@@ -73,10 +107,10 @@ void pr_app(m2_el_fnarg_p fnarg) {
     Feedrate = fastfeed;
     PosZ = preapph;
     m2_SetRoot(&el_preapp_course);  // go to pre approach function
-        refresh(); 
+        Refresh_LCD(); 
     MovingCommand();
     m2_SetRoot(&el_top);
-    refresh(); 
+    Refresh_LCD(); 
        
   }
 }

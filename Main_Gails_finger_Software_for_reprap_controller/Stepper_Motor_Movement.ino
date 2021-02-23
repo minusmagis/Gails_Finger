@@ -4,6 +4,20 @@ extern float Feedrate;
 extern boolean AllowedPosition;
 
 
+
+void Setup_Stepper_Motors(){
+  pinMode(STEPPERS_ENABLE_PIN, OUTPUT);                  // Set the enable pin as an output
+  pinMode(LIMIT_SWITCH_Z_PIN, INPUT_PULLUP);
+  
+  stepperZ.connectToPins(MOTOR_Z_STEP_PIN, MOTOR_Z_DIR_PIN);        //Initialize the motors
+  stepperZ.setStepsPerMillimeter(Zstepsmm);
+  stepperZ.setAccelerationInMillimetersPerSecondPerSecond(Zmmss);
+
+  digitalWrite(STEPPERS_ENABLE_PIN, LOW);                // Enable the steppers
+  Serial.begin(250000);
+}
+
+
 void SetSteppersMovement() {                             //Function for moving the steppers around sinchronously
   //  Serial.println("Move Steppers Checked");           //For Development purposes
   float Zmove = 0;                               //This variable stores the direction vector towards which we want the XZ carriage to move
